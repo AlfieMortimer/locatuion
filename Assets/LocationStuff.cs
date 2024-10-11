@@ -134,9 +134,6 @@ public class LocationStuff : MonoBehaviour
             calcedLong = currLoc.lon - calcedLong;
 
 
-
-            calcedLat = (currLoc.lat - startLoc.lat) * 1000000;
-            calcedLong = (currLoc.lon - startLoc.lon) * 1000000;
             print(startLoc.lat);
             print(startLoc.lon);
 
