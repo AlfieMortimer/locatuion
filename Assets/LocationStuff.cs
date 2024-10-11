@@ -122,6 +122,19 @@ public class LocationStuff : MonoBehaviour
             currLoc.lat = Input.location.lastData.latitude;
             currLoc.lon = Input.location.lastData.longitude;
 
+
+            calcedLat = currLoc.lat * 1000;
+            calcedLat = Mathf.FloorToInt(calcedLat);
+            calcedLat = calcedLat / 1000;
+            calcedLat = currLoc.lat - calcedLat;
+
+            calcedLong = currLoc.lat * 100000;
+            calcedLong = Mathf.FloorToInt(calcedLat);
+            calcedLong = calcedLat / 100000;
+            calcedLong = currLoc.lon - calcedLong;
+
+
+
             calcedLat = (currLoc.lat - startLoc.lat) * 1000000;
             calcedLong = (currLoc.lon - startLoc.lon) * 1000000;
             print(startLoc.lat);
