@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.AI;
 
 public class LocationStuff : MonoBehaviour
 {
@@ -17,15 +18,32 @@ public class LocationStuff : MonoBehaviour
     GPSLoc startLoc = new GPSLoc();
     GPSLoc currLoc = new GPSLoc();
 
+    float calcedLat;
+    float calcedLong;
+
+    public GameObject carObj;
+    public NavMeshAgent car;
+
     bool measureDistance = false;
 
 
+    float startLong;
+    float startLat;
+
+    bool firstpos = false;
+
     private void Start()
     {
-        StartCoroutine(startLocal());
+
+        StartCoroutine(StartDelay(3));
     }
-    // Start is called before the first frame update
-    IEnumerator startLocal()
+
+    IEnumerator StartDelay(float input)
+    {
+        yield return new WaitForSeconds(input);
+        StartCoroutine(StartLocal());
+    }
+    IEnumerator StartLocal()
     {
         // Check if the user has location service enabled.
         if (!Input.location.isEnabledByUser)
@@ -75,6 +93,8 @@ public class LocationStuff : MonoBehaviour
 
             gps_ok = true;
 
+
+
         }
 
 
@@ -83,7 +103,7 @@ public class LocationStuff : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gps_ok)
+        if (gps_ok && Input.location.status == LocationServiceStatus.Running)
         {
             debugTxt.text = "GPS:...";
 
@@ -94,16 +114,33 @@ public class LocationStuff : MonoBehaviour
                 + " \nH_Acc: " + Input.location.lastData.horizontalAccuracy
                 + " \nTime: " + Input.location.lastData.timestamp
                 + " \nstatus: " + Input.location.status
+                + " \ncarX: " + carObj.transform.position.x
+                + " \ncary: " + carObj.transform.position.y
+                + " \nfirstposition: " + firstpos.ToString();
 
-                +"\n aaannosex";
 
             currLoc.lat = Input.location.lastData.latitude;
             currLoc.lon = Input.location.lastData.longitude;
 
+            calcedLat = (currLoc.lat - startLoc.lat) * 1000000;
+            calcedLong = (currLoc.lon - startLoc.lon) * 1000000;
+            print(startLoc.lat);
+            print(startLoc.lon);
+
+            Vector3 destination = new Vector3(calcedLong, 0, calcedLat);
+
+            car.destination = destination;
 
             debugTxt.text += "\nStored: " + startLoc.getLocData();
 
-            
+            if (!firstpos)
+            {
+                startLoc.lat = currLoc.lat;
+                startLoc.lon = currLoc.lon;
+                print("ranfirstpos");
+
+                firstpos = true;
+            }
         }
     }
 
